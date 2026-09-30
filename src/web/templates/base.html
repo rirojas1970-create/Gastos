@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Gastos{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+</head>
+<body>
+  <header>
+    <h1>💰 Control de Gastos</h1>
+    <nav>
+       <a href="{{ url_for('main.inicio') }}">Inicio</a>
+    </nav>
+  </header>
+
+  <main>
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for categoria, mensaje in mensajes %}
+        <div class="flash {{ categoria }}">{{ mensaje }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer>Gastos App</footer>
+</body>
+</html>

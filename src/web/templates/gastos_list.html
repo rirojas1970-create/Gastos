@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Mis gastos</h2>
+{% if gastos %}
+<table>
+  <thead>
+    <tr><th>Fecha</th><th>Nombre</th><th>Categoría</th><th>Monto</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for g in gastos %}
+    <tr>
+      <td>{{ g.fecha }}</td>
+      <td>{{ g.nombre }}</td>
+      <td>{{ g.categoria }}</td>
+      <td class="monto">${{ "%.2f"|format(g.monto) }}</td>
+      <td class="acciones">
+        <a class="btn-editar" href="{{ url_for('gastos.editar', gasto_id=g.id) }}">Editar</a>
+        <form method="post" action="{{ url_for('gastos.eliminar', gasto_id=g.id) }}"
+              onsubmit="return confirm('¿Eliminar este gasto?')">
+          <button class="btn-borrar">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p>Todavía no hay gastos. <a href="{{ url_for('gastos.nuevo') }}">Cargá el primero</a>.</p>
+{% endif %}
+{% endblock %}

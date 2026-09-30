@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gastos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='menu.css') }}">
+</head>
+<body>
+  <main class="contenedor">
+    <h1>Gastos familiares</h1>
+
+    {% for grupo in menu %}
+      <section class="tarjeta {{ grupo.color }}">
+        <div class="sigla">{{ grupo.sigla }}</div>
+        <div class="contenido">
+          <h2>{{ grupo.titulo }}</h2>
+          <div class="botones">
+            {% for b in grupo.botones %}
+              {% if b.endpoint %}
+                <a class="chip" href="{{ url_for(b.endpoint) }}">{{ b.texto }}</a>
+              {% else %}
+                <span class="chip off" title="Próximamente">{{ b.texto }}</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    {% endfor %}
+  </main>
+</body>
+</html>
