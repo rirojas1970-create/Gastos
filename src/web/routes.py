@@ -12,6 +12,33 @@ from src.services.estadisticas_service import EstadisticasService
 bp = Blueprint("gastos", __name__)
 
 
+# ---------- Menú de inicio ----------
+
+MENU = [
+    {
+        "sigla": "REG", "titulo": "Registro de Gastos", "color": "rojo",
+        "botones": [
+            {"texto": "Anotar gasto", "endpoint": "gastos.nuevo"},
+            {"texto": "Ver gastos",   "endpoint": "gastos.listar"},
+        ],
+    },
+    {
+        "sigla": "EST", "titulo": "Estadísticas", "color": "naranja",
+        "botones": [
+            {"texto": "Ver estadísticas", "endpoint": "gastos.estadisticas"},
+        ],
+    },
+    {
+        "sigla": "CMP", "titulo": "Comparaciones", "color": "amarillo",
+        "botones": [
+            {"texto": "Mes vs mes", "endpoint": None},
+            {"texto": "Semanal",    "endpoint": None},
+            {"texto": "Histograma", "endpoint": None},
+        ],
+    },
+]
+
+
 # ---------- Sesión y servicios (uno por request) ----------
 
 def get_repo():
@@ -48,7 +75,7 @@ def _entero_opcional(valor):
 
 @bp.route("/")
 def inicio():
-    return redirect(url_for("gastos.listar"))
+    return render_template("inicio.html", menu=MENU)
 
 
 @bp.route("/gastos")
