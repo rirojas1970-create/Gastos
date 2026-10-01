@@ -1,20 +1,25 @@
 {% extends "base.html" %}
 {% block contenido %}
 <h2>{{ "Editar gasto" if gasto else "Nuevo gasto" }}</h2>
-<form method="post" class="formulario">
-  <label>Nombre
-    <input type="text" name="nombre" value="{{ gasto.nombre if gasto else '' }}" required>
-  </label>
-  <label>Categoría
-    <input type="text" name="categoria" value="{{ gasto.categoria if gasto else '' }}" required>
-  </label>
-  <label>Monto
-    <input type="number" name="monto" step="0.01" min="0.01"
-           value="{{ gasto.monto if gasto else '' }}" required>
-  </label>
-  <label>Fecha
-    <input type="date" name="fecha" value="{{ gasto.fecha if gasto else hoy }}" required>
-  </label>
-  <button type="submit">Guardar</button>
-</form>
+<div class="panel">
+  <form method="post" class="formulario">
+    <label>Nombre
+      <input type="text" name="nombre" value="{{ gasto.nombre if gasto else '' }}" required>
+    </label>
+    <label>Categoría
+      <input type="text" name="categoria" value="{{ gasto.categoria if gasto else '' }}" required>
+    </label>
+    <label>Monto
+      <input type="number" name="monto" step="0.01" min="0.01"
+             value="{{ gasto.monto if gasto else '' }}" required>
+    </label>
+    <label>Fecha
+      <input type="date" name="fecha" value="{{ gasto.fecha if gasto else hoy }}" required>
+    </label>
+    <div class="acciones-form">
+      <button type="submit">Guardar</button>
+      <a class="btn-sec" href="{{ url_for('gastos.listar') }}">Cancelar</a>
+    </div>
+  </form>
+</div>
 {% endblock %}

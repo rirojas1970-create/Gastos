@@ -16,20 +16,23 @@ bp = Blueprint("gastos", __name__)
 
 MENU = [
     {
-        "sigla": "REG", "titulo": "Registro de Gastos", "color": "rojo",
+        "titulo": "Registro de gastos",
+        "descripcion": "Cargá nuevos gastos y administrá los que ya anotaste.",
         "botones": [
             {"texto": "Anotar gasto", "endpoint": "gastos.nuevo"},
             {"texto": "Ver gastos",   "endpoint": "gastos.listar"},
         ],
     },
     {
-        "sigla": "EST", "titulo": "Estadísticas", "color": "naranja",
+        "titulo": "Estadísticas",
+        "descripcion": "Totales por categoría y por mes, con filtros por período.",
         "botones": [
             {"texto": "Ver estadísticas", "endpoint": "gastos.estadisticas"},
         ],
     },
     {
-        "sigla": "CMP", "titulo": "Comparaciones", "color": "amarillo",
+        "titulo": "Comparaciones",
+        "descripcion": "Compará períodos y visualizá la evolución de tus gastos.",
         "botones": [
             {"texto": "Mes vs mes", "endpoint": None},
             {"texto": "Semanal",    "endpoint": None},

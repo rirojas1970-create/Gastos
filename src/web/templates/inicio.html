@@ -1,32 +1,23 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gastos</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
-</head>
-<body>
-  <main class="contenedor">
-    <h1>Gastos familiares</h1>
+{% extends "base.html" %}
+{% block contenido %}
+<h2>Panel principal</h2>
+<p class="sub">Elegí qué querés hacer.</p>
 
-    {% for grupo in menu %}
-      <section class="tarjeta {{ grupo.color }}">
-        <div class="sigla">{{ grupo.sigla }}</div>
-        <div class="contenido">
-          <h2>{{ grupo.titulo }}</h2>
-          <div class="botones">
-            {% for b in grupo.botones %}
-              {% if b.endpoint %}
-                <a class="chip" href="{{ url_for(b.endpoint) }}">{{ b.texto }}</a>
-              {% else %}
-                <span class="chip off" title="Próximamente">{{ b.texto }}</span>
-              {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-      </section>
-    {% endfor %}
-  </main>
-</body>
-</html>
+<div class="menu-grid">
+  {% for grupo in menu %}
+    <section class="panel tarjeta">
+      <h3>{{ grupo.titulo }}</h3>
+      <p>{{ grupo.descripcion }}</p>
+      <div class="botones">
+        {% for b in grupo.botones %}
+          {% if b.endpoint %}
+            <a class="chip" href="{{ url_for(b.endpoint) }}">{{ b.texto }}</a>
+          {% else %}
+            <span class="chip off" title="Próximamente">{{ b.texto }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -2,48 +2,54 @@
 {% block contenido %}
 <h2>Estadísticas</h2>
 
-<form method="get" class="filtros">
-  <label>Año
-    <input type="number" name="año" min="2000" max="2100" value="{{ año or '' }}" placeholder="Todos">
-  </label>
-  <label>Mes
-    <select name="mes">
-      <option value="">Todos</option>
-      {% for n in range(1, 13) %}
-        <option value="{{ n }}" {{ "selected" if mes == n else "" }}>{{ "%02d"|format(n) }}</option>
-      {% endfor %}
-    </select>
-  </label>
-  <button type="submit">Filtrar</button>
-  <a href="{{ url_for('gastos.estadisticas') }}">Limpiar</a>
-</form>
+<div class="panel">
+  <form method="get" class="filtros">
+    <label>Año
+      <input type="number" name="año" min="2000" max="2100" value="{{ año or '' }}" placeholder="Todos">
+    </label>
+    <label>Mes
+      <select name="mes">
+        <option value="">Todos</option>
+        {% for n in range(1, 13) %}
+          <option value="{{ n }}" {{ "selected" if mes == n else "" }}>{{ "%02d"|format(n) }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button type="submit">Filtrar</button>
+    <a href="{{ url_for('gastos.estadisticas') }}">Limpiar</a>
+  </form>
+</div>
 
 <p class="total">Total del período: <strong>${{ "%.2f"|format(total) }}</strong></p>
 
 <h3>Por categoría</h3>
 {% if por_categoria %}
-<table>
-  <thead><tr><th>Categoría</th><th>Monto</th></tr></thead>
-  <tbody>
-  {% for cat, monto in por_categoria.items() %}
-    <tr><td>{{ cat }}</td><td class="monto">${{ "%.2f"|format(monto) }}</td></tr>
-  {% endfor %}
-  </tbody>
-</table>
+<div class="panel tabla-wrap">
+  <table>
+    <thead><tr><th>Categoría</th><th class="monto">Monto</th></tr></thead>
+    <tbody>
+    {% for cat, monto in por_categoria.items() %}
+      <tr><td>{{ cat }}</td><td class="monto">${{ "%.2f"|format(monto) }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% else %}
   <p>Sin datos para ese período.</p>
 {% endif %}
 
 <h3>Por mes{% if año %} ({{ año }}){% endif %}</h3>
 {% if por_mes %}
-<table>
-  <thead><tr><th>Mes</th><th>Monto</th></tr></thead>
-  <tbody>
-  {% for m, monto in por_mes.items() %}
-    <tr><td>{{ m }}</td><td class="monto">${{ "%.2f"|format(monto) }}</td></tr>
-  {% endfor %}
-  </tbody>
-</table>
+<div class="panel tabla-wrap">
+  <table>
+    <thead><tr><th>Mes</th><th class="monto">Monto</th></tr></thead>
+    <tbody>
+    {% for m, monto in por_mes.items() %}
+      <tr><td>{{ m }}</td><td class="monto">${{ "%.2f"|format(monto) }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% else %}
   <p>Sin datos para ese período.</p>
 {% endif %}

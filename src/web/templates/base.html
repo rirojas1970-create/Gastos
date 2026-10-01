@@ -4,13 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}Gastos{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
 </head>
 <body>
   <header>
-    <h1>💰 Control de Gastos</h1>
+    <a class="marca" href="{{ url_for('gastos.inicio') }}">Control de Gastos</a>
     <nav>
-       <a href="{{ url_for('gastos.inicio') }}">Inicio</a>
+      <a href="{{ url_for('gastos.inicio') }}"
+         class="{{ 'activo' if request.endpoint == 'gastos.inicio' }}">Inicio</a>
+      <a href="{{ url_for('gastos.nuevo') }}"
+         class="{{ 'activo' if request.endpoint == 'gastos.nuevo' }}">Anotar gasto</a>
+      <a href="{{ url_for('gastos.listar') }}"
+         class="{{ 'activo' if request.endpoint in ['gastos.listar', 'gastos.editar'] }}">Ver gastos</a>
+      <a href="{{ url_for('gastos.estadisticas') }}"
+         class="{{ 'activo' if request.endpoint == 'gastos.estadisticas' }}">Estadísticas</a>
     </nav>
   </header>
 
