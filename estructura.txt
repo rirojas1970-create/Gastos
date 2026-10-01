@@ -1,9 +1,29 @@
-db_gastos/
-│── src/
-│   ├── models/          # Clases de dominio (Gasto, Usuario)
-│   ├── repositories/    # Acceso a datos (MySQLRepositorio)
-│   ├── services/        # Lógica de negocio (GastoService)
-│   ├── controllers/     # Entrada/salida (API, CLI)
-│   └── config/          # Configuración (cadena de conexión, settings)
-│── tests/               # Pruebas unitarias
-│── main.py              # Punto de entrada
+Gastos/
+├── .venv/
+├── .env
+├── estructura.txt                ← ACTUALIZAR (agregar inicio.html y menu.css)
+├── main.py                       ← sin cambios
+├── app.py                        ← REVISAR (punto 4)
+│
+├── src/
+│   ├── config/                   ← sin cambios
+│   ├── models/                   ← sin cambios
+│   ├── repositories/             ← sin cambios
+│   ├── services/                 ← sin cambios (por ahora)
+│   ├── controllers/              ← sin cambios
+│   │
+│   └── web/
+│       ├── __init__.py           ← sin cambios
+│       ├── routes.py             ← MODIFICAR (punto 3)
+│       ├── static/
+│       │   ├── css/
+│       │   │   └── menu.css      ← NUEVO (punto 1)
+│       │   └── js/               ← sin cambios
+│       └── templates/
+│           ├── base.html         ← MODIFICAR (punto 2b)
+│           ├── inicio.html       ← NUEVO (punto 2a)
+│           ├── gastos_list.html  ← sin cambios (opcional: link "← Inicio")
+│           ├── gasto_form.html   ← sin cambios (opcional: link "← Inicio")
+│           └── estadisticas.html ← sin cambios (opcional: link "← Inicio")
+│
+└── tests/                        ← sin cambios

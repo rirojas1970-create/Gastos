@@ -19,7 +19,7 @@ h1 { text-align: center; }
 a.chip:hover { background: #222; color: #fff; }
 .chip.off { opacity: .45; cursor: not-allowed; border-style: dashed; }
 
-.rojo     { background: #ffb3bd; }
-.naranja  { background: #ffd9b3; }
+.rojo     { background: hsl(112, 75%, 78%); }
+.naranja  { background: #f1ac67; }
 .amarillo { background: #fff7a8; }
-.azul     { background: #b8dcff; }
+.azul     { background: #8fbff0; }
