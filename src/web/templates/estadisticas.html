@@ -19,9 +19,7 @@
     <a href="{{ url_for('gastos.estadisticas') }}">Limpiar</a>
   </form>
 </div>
-
-<p class="total">Total del período: <strong>${{ "%.2f"|format(total) }}</strong></p>
-
+<p class="total">Total del período: <strong>{{ total|pesos }}</strong></p>
 <h3>Por categoría</h3>
 {% if por_categoria %}
 <div class="panel tabla-wrap">
@@ -29,7 +27,7 @@
     <thead><tr><th>Categoría</th><th class="monto">Monto</th></tr></thead>
     <tbody>
     {% for cat, monto in por_categoria.items() %}
-      <tr><td>{{ cat }}</td><td class="monto">${{ "%.2f"|format(monto) }}</td></tr>
+    <tr><td>{{ cat }}</td><td class="monto">{{ monto|pesos }}</td></tr>
     {% endfor %}
     </tbody>
   </table>
@@ -45,7 +43,7 @@
     <thead><tr><th>Mes</th><th class="monto">Monto</th></tr></thead>
     <tbody>
     {% for m, monto in por_mes.items() %}
-      <tr><td>{{ m }}</td><td class="monto">${{ "%.2f"|format(monto) }}</td></tr>
+    <tr><td>{{ m }}</td><td class="monto">{{ monto|pesos }}</td></tr>
     {% endfor %}
     </tbody>
   </table>

@@ -14,6 +14,9 @@ class GastoService:
     def listar_gastos(self):
         return self.repository.obtener_todos()
 
+    def listar_por_mes(self, año, mes):
+        return self.repository.obtener_por_mes(año, mes)
+
     def obtener_gasto(self, gasto_id: int):
         gasto = self.repository.obtener_por_id(gasto_id)
         if gasto is None:

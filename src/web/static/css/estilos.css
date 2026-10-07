@@ -59,7 +59,7 @@ main {
   width: 100%;
   max-width: 920px;
   margin: 0 auto;
-  padding: 28px 20px;
+  padding: 10px 10px;
 }
 h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 16px; }
 h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
@@ -156,9 +156,18 @@ input:focus, select:focus {
 }
 .filtros a { color: var(--texto-sec); font-size: .9rem; padding: 8px 4px; }
 
+/*-----------meses--------*/
+.selector-mes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
 /* ---------- Tablas ---------- */
 .tabla-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; }
+table { width: 100%; border-collapse:unset; }
 th {
   text-align: left;
   font-size: .8rem;
@@ -172,11 +181,12 @@ tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover { background: #f7f8fa; }
 th:has(+ th:last-child), td.monto { font-variant-numeric: tabular-nums; }
 .monto { text-align: right; white-space: nowrap; }
-.acciones { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
-.acciones form { margin: 0; }
+.acciones { text-align: right; white-space: nowrap; }
+.acciones form { display: inline-block; margin: 0 0 0 0.1px; vertical-align: middle; }
+.acciones .btn-editar { vertical-align: middle; }
 
 /* ---------- Mensajes ---------- */
-.flash {
+.flash {.acciones { text-align: right; white-space: nowrap; }
   padding: 10px 14px;
   border-radius: 6px;
   border: 1px solid;

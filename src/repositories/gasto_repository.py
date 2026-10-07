@@ -1,4 +1,6 @@
 from src.models.gasto import Gasto
+from datetime import date
+
 
 class GastoRepository:
     def __init__(self, session):
@@ -11,6 +13,16 @@ class GastoRepository:
 
     def obtener_todos(self):
         return self.session.query(Gasto).all()
+    
+    def obtener_por_mes(self, año: int, mes: int):
+        desde = date(año, mes, 1)
+        hasta = date(año + 1, 1, 1) if mes == 12 else date(año, mes + 1, 1)
+        return (
+            self.session.query(Gasto)
+            .filter(Gasto.fecha >= desde, Gasto.fecha < hasta)
+            .order_by(Gasto.fecha.desc(), Gasto.id.desc())
+            .all()
+        )
 
     def obtener_por_id(self, gasto_id: int):
         return self.session.get(Gasto, gasto_id)

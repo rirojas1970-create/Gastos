@@ -14,6 +14,9 @@ bp = Blueprint("gastos", __name__)
 
 # ---------- Menú de inicio ----------
 
+MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
+         "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+
 MENU = [
     {
         "titulo": "Registro de gastos",
@@ -83,8 +86,28 @@ def inicio():
 
 @bp.route("/gastos")
 def listar():
-    gastos = gasto_service().listar_gastos()
-    return render_template("gastos_list.html", gastos=gastos)
+    hoy = date.today()
+    año = _entero_opcional(request.args.get("año")) or hoy.year
+    mes = _entero_opcional(request.args.get("mes")) or hoy.month
+    if not 1 <= mes <= 12:
+        año, mes = hoy.year, hoy.month
+
+    gastos = gasto_service().listar_por_mes(año, mes)
+    total = sum(g.monto for g in gastos)
+
+    anterior = (año - 1, 12) if mes == 1 else (año, mes - 1)
+    siguiente = (año + 1, 1) if mes == 12 else (año, mes + 1)
+
+    return render_template(
+        "gastos_list.html",
+        gastos=gastos,
+        total=total,
+        año=año,
+        mes=mes,
+        nombre_mes=MESES[mes - 1],
+        anterior=anterior,
+        siguiente=siguiente,
+    )
 
 
 @bp.route("/gastos/nuevo", methods=["GET", "POST"])

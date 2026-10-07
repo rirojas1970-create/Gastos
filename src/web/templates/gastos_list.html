@@ -5,6 +5,12 @@
   <a class="btn" href="{{ url_for('gastos.nuevo') }}">Anotar gasto</a>
 </div>
 
+<div class="selector-mes">
+  <a class="btn-sec" href="{{ url_for('gastos.listar', año=anterior[0], mes=anterior[1]) }}">‹ Mes anterior</a>
+  <strong>{{ nombre_mes|capitalize }} {{ año }}</strong>
+  <a class="btn-sec" href="{{ url_for('gastos.listar', año=siguiente[0], mes=siguiente[1]) }}">Mes siguiente ›</a>
+</div>
+
 {% if gastos %}
 <div class="panel tabla-wrap">
   <table>
@@ -17,11 +23,11 @@
         <td>{{ g.fecha }}</td>
         <td>{{ g.nombre }}</td>
         <td>{{ g.categoria }}</td>
-        <td class="monto">${{ "%.2f"|format(g.monto) }}</td>
+        <td class="monto">{{ g.monto|pesos }}</td>
         <td class="acciones">
           <a class="btn-editar" href="{{ url_for('gastos.editar', gasto_id=g.id) }}">Editar</a>
           <form method="post" action="{{ url_for('gastos.eliminar', gasto_id=g.id) }}"
-                onsubmit="return confirm('¿Eliminar este gasto?')">
+onsubmit="return confirm('¿Eliminar este gasto?')">
             <button class="btn-borrar">Eliminar</button>
           </form>
         </td>
@@ -30,9 +36,10 @@
     </tbody>
   </table>
 </div>
+<div class="total">Total de {{ nombre_mes }}: <strong>{{ total|pesos }}</strong></div>
 {% else %}
   <div class="panel">
-    <p>Todavía no hay gastos. <a href="{{ url_for('gastos.nuevo') }}">Cargá el primero</a>.</p>
+    <p>No hay gastos en {{ nombre_mes }} de {{ año }}. <a href="{{ url_for('gastos.nuevo') }}">Anotar uno</a>.</p>
   </div>
 {% endif %}
 {% endblock %}
