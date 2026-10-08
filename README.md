@@ -4,7 +4,7 @@ Aplicación web para registrar, consultar y analizar los gastos de una familia. 
 
 🔗 **Demo en vivo:** _(link al deploy)_
 
-![Pantalla principal](docs/img/home.png)
+![Pantalla principal](docs/img/gastos_app.png)
 
 ## ✨ Funcionalidades
 
