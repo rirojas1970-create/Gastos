@@ -8,6 +8,7 @@ class GastoService:
     def registrar_gasto(self, nombre, categoria, monto, fecha):
         if monto <= 0:
             raise ValueError("El monto debe ser mayor a cero")
+        nombre = nombre.strip()
         gasto = Gasto(nombre=nombre, categoria=categoria, monto=monto, fecha=fecha)
         return self.repository.guardar(gasto)
 
@@ -26,6 +27,8 @@ class GastoService:
     def actualizar_gasto(self, gasto_id, nombre=None, categoria=None, monto=None, fecha=None):
         if monto is not None and monto <= 0:
             raise ValueError("El monto debe ser mayor a cero")
+        if nombre is not None:
+            nombre = nombre.strip()
         gasto = self.repository.actualizar(
             gasto_id, nombre=nombre, categoria=categoria, monto=monto, fecha=fecha
         )

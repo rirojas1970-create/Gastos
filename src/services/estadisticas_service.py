@@ -32,6 +32,31 @@ class EstadisticasService:
         for g in filtrados:
             resumen[g.categoria] += g.monto
         return dict(sorted(resumen.items(), key=lambda x: x[1], reverse=True))
+    
+    def detalle_por_categoria(self, categoria: str, año: int = None, mes: int = None):
+        """Desglose de una categoría por nombre (lugar/producto), de mayor a menor"""
+        gastos = self.repository.obtener_todos()
+        filtrados = self._filtrar(gastos, año=año, mes=mes, categoria=categoria)
+
+        totales = defaultdict(float)
+        cantidades = defaultdict(int)
+        etiquetas = {}
+        for g in filtrados:
+            clave = g.nombre.strip().lower()
+            totales[clave] += g.monto
+            cantidades[clave] += 1
+            etiquetas.setdefault(clave, g.nombre.strip())
+
+        total_categoria = sum(totales.values())
+        detalle = []
+        for clave, total in sorted(totales.items(), key=lambda x: x[1], reverse=True):
+            detalle.append({
+                "nombre": etiquetas[clave],
+                "total": total,
+                "cantidad": cantidades[clave],
+                "porcentaje": (total / total_categoria * 100) if total_categoria else 0,
+            })
+        return detalle
 
     def resumen_por_mes(self, año: int = None):
         """Total agrupado por mes (para ver la evolución mensual)"""

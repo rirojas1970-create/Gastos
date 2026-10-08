@@ -76,6 +76,23 @@ def _entero_opcional(valor):
     except ValueError:
         return None
 
+def _resolver_periodo(año, mes):
+    """Si se elige un mes sin año, se usa el año actual."""
+    if mes and not año:
+        año = date.today().year
+    return año, mes
+
+def _texto_periodo(año, mes):
+    """Describe el período que se está mostrando, para mostrarlo en pantalla."""
+    mes = mes if mes and 1 <= mes <= 12 else None
+    if año and mes:
+        return f"{MESES[mes - 1]} de {año}"
+    if año:
+        return f"todo el año {año}"
+    if mes:
+        return f"{MESES[mes - 1]} de todos los años"
+    return "todo el período registrado"
+
 
 # ---------- Rutas ----------
 
@@ -107,6 +124,7 @@ def listar():
         nombre_mes=MESES[mes - 1],
         anterior=anterior,
         siguiente=siguiente,
+        
     )
 
 
@@ -167,6 +185,7 @@ def eliminar(gasto_id):
 def estadisticas():
     año = _entero_opcional(request.args.get("año"))
     mes = _entero_opcional(request.args.get("mes"))
+    año, mes = _resolver_periodo(año, mes)
 
     stats = estadisticas_service()
     return render_template(
@@ -176,4 +195,33 @@ def estadisticas():
         por_mes=stats.resumen_por_mes(año=año),
         año=año,
         mes=mes,
+    )
+
+@bp.route("/estadisticas/categoria/<categoria>")
+def detalle_categoria(categoria):
+    año = _entero_opcional(request.args.get("año"))
+    mes = _entero_opcional(request.args.get("mes"))
+    año, mes = _resolver_periodo(año, mes)
+
+    detalle = estadisticas_service().detalle_por_categoria(categoria, año=año, mes=mes)
+    total = sum(d["total"] for d in detalle)
+
+    # Para el gráfico: los 10 mayores y el resto agrupado en "Otros"
+    etiquetas = [d["nombre"] for d in detalle[:10]]
+    valores = [d["total"] for d in detalle[:10]]
+    resto = sum(d["total"] for d in detalle[10:])
+    if resto:
+        etiquetas.append("Otros")
+        valores.append(resto)
+
+    return render_template(
+        "estadistica_categoria.html",
+        categoria=categoria,
+        detalle=detalle,
+        total=total,
+        etiquetas=etiquetas,
+        valores=valores,
+        año=año,
+        mes=mes,
+        periodo=_texto_periodo(año, mes),
     )

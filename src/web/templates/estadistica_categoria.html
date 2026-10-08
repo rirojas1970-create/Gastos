@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block contenido %}
-<h2>Estadísticas</h2>
+<h2>{{ categoria }}</h2>
+<p>
+  <a href="{{ url_for('gastos.estadisticas', año=año, mes=mes) }}">← Volver a estadísticas</a>
+</p>
 
 <div class="panel">
   <form method="get" class="filtros">
@@ -16,28 +19,39 @@
       </select>
     </label>
     <button type="submit">Filtrar</button>
-    <a href="{{ url_for('gastos.estadisticas') }}">Limpiar</a>
+    <a href="{{ url_for('gastos.detalle_categoria', categoria=categoria) }}">Limpiar</a>
   </form>
 </div>
-<p class="total">Total del período: <strong>{{ total|pesos }}</strong></p>
-<h3>Por categoría</h3>
-{% if por_categoria %}
+
+<p class="total">
+  Total de {{ categoria }} en <strong>{{ periodo }}</strong>:
+  <strong>{{ total|pesos }}</strong>
+</p>
+
+{% if detalle %}
 <div class="panel">
-  <div style="height: {{ por_categoria|length * 36 + 60 }}px;">
-    <canvas id="grafico-categorias"></canvas>
+  <div style="height: {{ etiquetas|length * 36 + 60 }}px;">
+    <canvas id="grafico-detalle"></canvas>
   </div>
 </div>
+
 <div class="panel tabla-wrap">
   <table>
     <thead>
-      <tr><th>Categoría</th><th class="monto">Monto</th><th class="monto">% del total</th></tr>
+      <tr>
+        <th>Lugar / producto</th>
+        <th class="monto">Compras</th>
+        <th class="monto">Monto</th>
+        <th class="monto">% de la categoría</th>
+      </tr>
     </thead>
     <tbody>
-    {% for cat, monto in por_categoria.items() %}
+    {% for d in detalle %}
     <tr>
-      <td><a href="{{ url_for('gastos.detalle_categoria', categoria=cat, año=año, mes=mes) }}">{{ cat }}</a></td>
-      <td class="monto">{{ monto|pesos }}</td>
-      <td class="monto">{{ "%.1f"|format(monto / total * 100) }}%</td>
+      <td>{{ d.nombre }}</td>
+      <td class="monto">{{ d.cantidad }}</td>
+      <td class="monto">{{ d.total|pesos }}</td>
+      <td class="monto">{{ "%.1f"|format(d.porcentaje) }}%</td>
     </tr>
     {% endfor %}
     </tbody>
@@ -46,12 +60,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-  new Chart(document.getElementById('grafico-categorias'), {
+  new Chart(document.getElementById('grafico-detalle'), {
     type: 'bar',
     data: {
-      labels: {{ por_categoria.keys()|list|tojson }},
+      labels: {{ etiquetas|tojson }},
       datasets: [{
-        data: {{ por_categoria.values()|list|tojson }},
+        data: {{ valores|tojson }},
         backgroundColor: '#1e293b',
         borderRadius: 4
       }]
@@ -68,21 +82,6 @@
   });
 </script>
 {% else %}
-  <p>Sin datos para ese período.</p>
-{% endif %}
-<h3>Por mes{% if año %} ({{ año }}){% endif %}</h3>
-{% if por_mes %}
-<div class="panel tabla-wrap">
-  <table>
-    <thead><tr><th>Mes</th><th class="monto">Monto</th></tr></thead>
-    <tbody>
-    {% for m, monto in por_mes.items() %}
-    <tr><td>{{ m }}</td><td class="monto">{{ monto|pesos }}</td></tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</div>
-{% else %}
-  <p>Sin datos para ese período.</p>
+  <p>Sin gastos en esta categoría para ese período.</p>
 {% endif %}
 {% endblock %}
