@@ -50,7 +50,7 @@ Los servicios no saben si se los llama desde la consola o desde la web, por eso 
 
 ```bash
 # 1. Clonar
-git clone https://github.com/<tu-usuario>/<tu-repo>.git
+git clone https://github.com/rirojas1970-create/db_gastos.git
 cd <tu-repo>
 
 # 2. Entorno virtual
