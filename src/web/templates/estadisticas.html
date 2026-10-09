@@ -11,7 +11,7 @@
       <select name="mes">
         <option value="">Todos</option>
         {% for n in range(1, 13) %}
-          <option value="{{ n }}" {{ "selected" if mes == n else "" }}>{{ "%02d"|format(n) }}</option>
+        <option value="{{ n }}" {{ "selected" if mes == n else "" }}>{{ meses[n - 1]|capitalize }}</option>
         {% endfor %}
       </select>
     </label>

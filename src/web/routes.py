@@ -33,13 +33,12 @@ MENU = [
             {"texto": "Ver estadísticas", "endpoint": "gastos.estadisticas"},
         ],
     },
-    {
+       {
         "titulo": "Comparaciones",
         "descripcion": "Compará períodos y visualizá la evolución de tus gastos.",
         "botones": [
-            {"texto": "Mes vs mes", "endpoint": None},
-            {"texto": "Semanal",    "endpoint": None},
-            {"texto": "Histograma", "endpoint": None},
+            {"texto": "Comparar períodos", "endpoint": "gastos.comparar_periodos"},
+            {"texto": "Evolución mensual", "endpoint": None},
         ],
     },
 ]
@@ -92,6 +91,30 @@ def _texto_periodo(año, mes):
     if mes:
         return f"{MESES[mes - 1]} de todos los años"
     return "todo el período registrado"
+
+def _leer_periodo(prefijo, defecto):
+    """Lee desde/hasta (mes y año) de un período. 'defecto' es ((año, mes), (año, mes))."""
+    d_mes = _entero_opcional(request.args.get(f"{prefijo}_desde_mes"))
+    d_año = _entero_opcional(request.args.get(f"{prefijo}_desde_año"))
+    h_mes = _entero_opcional(request.args.get(f"{prefijo}_hasta_mes"))
+    h_año = _entero_opcional(request.args.get(f"{prefijo}_hasta_año"))
+    if None in (d_mes, d_año, h_mes, h_año):
+        return defecto
+    if not (1 <= d_mes <= 12 and 1 <= h_mes <= 12):
+        return defecto
+    desde, hasta = (d_año, d_mes), (h_año, h_mes)
+    if hasta < desde:  # si los pusiste al revés, se corrigen solos
+        desde, hasta = hasta, desde
+    return desde, hasta
+
+
+def _etiqueta_periodo(desde, hasta):
+    (a1, m1), (a2, m2) = desde, hasta
+    if desde == hasta:
+        return f"{MESES[m1 - 1]} de {a1}"
+    if a1 == a2:
+        return f"{MESES[m1 - 1]} a {MESES[m2 - 1]} de {a1}"
+    return f"{MESES[m1 - 1]} de {a1} a {MESES[m2 - 1]} de {a2}"
 
 
 # ---------- Rutas ----------
@@ -195,6 +218,7 @@ def estadisticas():
         por_mes=stats.resumen_por_mes(año=año),
         año=año,
         mes=mes,
+        meses=MESES,
     )
 
 @bp.route("/estadisticas/categoria/<categoria>")
@@ -224,4 +248,28 @@ def detalle_categoria(categoria):
         año=año,
         mes=mes,
         periodo=_texto_periodo(año, mes),
+        meses=MESES,
+    )
+
+@bp.route("/comparaciones/periodos")
+def comparar_periodos():
+    stats = estadisticas_service()
+    hoy = date.today()
+
+    # Por defecto: el último mes con datos contra el mes anterior
+    base = stats.ultimo_mes_con_datos() or (hoy.year, hoy.month)
+    anterior = (base[0] - 1, 12) if base[1] == 1 else (base[0], base[1] - 1)
+
+    desde_a, hasta_a = _leer_periodo("a", (anterior, anterior))
+    desde_b, hasta_b = _leer_periodo("b", (base, base))
+
+    datos = stats.comparar_periodos(desde_a, hasta_a, desde_b, hasta_b)
+    return render_template(
+        "comparar_periodos.html",
+        datos=datos,
+        desde_a=desde_a, hasta_a=hasta_a,
+        desde_b=desde_b, hasta_b=hasta_b,
+        etiqueta_a=_etiqueta_periodo(desde_a, hasta_a),
+        etiqueta_b=_etiqueta_periodo(desde_b, hasta_b),
+        meses=MESES,
     )

@@ -73,3 +73,59 @@ class EstadisticasService:
         gastos = self.repository.obtener_todos()
         filtrados = self._filtrar(gastos, año=año, mes=mes)
         return sum(g.monto for g in filtrados)
+
+    def ultimo_mes_con_datos(self):
+        """(año, mes) del gasto más reciente, o None si no hay gastos"""
+        gastos = self.repository.obtener_todos()
+        if not gastos:
+            return None
+        ultimo = max(g.fecha for g in gastos)
+        return (ultimo.year, ultimo.month)
+
+    def comparar_periodos(self, desde_a, hasta_a, desde_b, hasta_b):
+        """Compara dos períodos por categoría. Cada extremo es una tupla (año, mes)."""
+        gastos = self.repository.obtener_todos()
+
+        def indice(año_mes):
+            # convierte (año, mes) a un número para poder comparar rangos
+            return año_mes[0] * 12 + año_mes[1]
+
+        def resumir(desde, hasta):
+            ini, fin = indice(desde), indice(hasta)
+            totales = defaultdict(float)
+            cantidades = defaultdict(int)
+            for g in gastos:
+                if ini <= g.fecha.year * 12 + g.fecha.month <= fin:
+                    totales[g.categoria] += g.monto
+                    cantidades[g.categoria] += 1
+            return totales, cantidades, sum(totales.values()), fin - ini + 1
+
+        tot_a, cant_a, suma_a, meses_a = resumir(desde_a, hasta_a)
+        tot_b, cant_b, suma_b, meses_b = resumir(desde_b, hasta_b)
+
+        filas = []
+        for cat in set(tot_a) | set(tot_b):
+            a = tot_a.get(cat, 0.0)
+            b = tot_b.get(cat, 0.0)
+            filas.append({
+                "categoria": cat,
+                "total_a": a,
+                "total_b": b,
+                "variacion": ((b - a) / a * 100) if a else None,
+                "pct_a": (a / suma_a * 100) if suma_a else 0,
+                "pct_b": (b / suma_b * 100) if suma_b else 0,
+                "cant_a": cant_a.get(cat, 0),
+                "cant_b": cant_b.get(cat, 0),
+            })
+        filas.sort(key=lambda f: f["total_b"], reverse=True)
+
+        return {
+            "filas": filas,
+            "suma_a": suma_a,
+            "suma_b": suma_b,
+            "meses_a": meses_a,
+            "meses_b": meses_b,
+            "prom_a": suma_a / meses_a,
+            "prom_b": suma_b / meses_b,
+            "variacion_total": ((suma_b - suma_a) / suma_a * 100) if suma_a else None,
+        }

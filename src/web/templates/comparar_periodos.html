@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+{% macro selector_mes(nombre, actual, meses) %}
+<select name="{{ nombre }}">
+  {% for n in range(1, 13) %}
+    <option value="{{ n }}" {{ "selected" if actual == n else "" }}>{{ meses[n - 1]|capitalize }}</option>
+  {% endfor %}
+</select>
+{% endmacro %}
+
+<h2>Comparar períodos</h2>
+
+<div class="panel">
+  <form method="get" class="comparador">
+    <div class="periodos">
+
+      <div class="periodo a">
+        <h4>Período A</h4>
+        <div class="fila">
+          <span class="rotulo">Desde</span>
+          {{ selector_mes("a_desde_mes", desde_a[1], meses) }}
+          <input type="number" name="a_desde_año" min="2000" max="2100" value="{{ desde_a[0] }}">
+        </div>
+        <div class="fila">
+          <span class="rotulo">Hasta</span>
+          {{ selector_mes("a_hasta_mes", hasta_a[1], meses) }}
+          <input type="number" name="a_hasta_año" min="2000" max="2100" value="{{ hasta_a[0] }}">
+        </div>
+      </div>
+
+      <div class="periodo b">
+        <h4>Período B</h4>
+        <div class="fila">
+          <span class="rotulo">Desde</span>
+          {{ selector_mes("b_desde_mes", desde_b[1], meses) }}
+          <input type="number" name="b_desde_año" min="2000" max="2100" value="{{ desde_b[0] }}">
+        </div>
+        <div class="fila">
+          <span class="rotulo">Hasta</span>
+          {{ selector_mes("b_hasta_mes", hasta_b[1], meses) }}
+          <input type="number" name="b_hasta_año" min="2000" max="2100" value="{{ hasta_b[0] }}">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="acciones">
+      <button type="submit">Comparar</button>
+      <a href="{{ url_for('gastos.comparar_periodos') }}">Restablecer</a>
+    </div>
+  </form>
+</div>
+
+<p class="total">
+  A ({{ etiqueta_a }}): <strong>{{ datos.suma_a|pesos }}</strong>
+  &nbsp;·&nbsp;
+  B ({{ etiqueta_b }}): <strong>{{ datos.suma_b|pesos }}</strong>
+  {% if datos.variacion_total is not none %}
+    &nbsp;·&nbsp; Variación: <strong>{{ "%+.1f"|format(datos.variacion_total) }}%</strong>
+  {% endif %}
+</p>
+
+{% if datos.meses_a != datos.meses_b %}
+<p>
+  <small>⚠ Los períodos tienen distinta duración ({{ datos.meses_a }} vs {{ datos.meses_b }} meses),
+  así que los totales no son directamente comparables. Promedio mensual:
+  A {{ datos.prom_a|pesos }} · B {{ datos.prom_b|pesos }}.</small>
+</p>
+{% endif %}
+
+{% if datos.filas %}
+<div class="panel">
+  <div style="height: {{ datos.filas|length * 52 + 80 }}px;">
+    <canvas id="grafico-comparacion"></canvas>
+  </div>
+</div>
+
+<div class="panel tabla-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Categoría</th>
+        <th class="monto">A</th>
+        <th class="monto">B</th>
+        <th class="monto">Variación</th>
+        <th class="monto">% del total (A → B)</th>
+        <th class="monto">Compras (A → B)</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for f in datos.filas %}
+    <tr>
+      <td>{{ f.categoria }}</td>
+      <td class="monto">{{ f.total_a|pesos }}</td>
+      <td class="monto">{{ f.total_b|pesos }}</td>
+      <td class="monto">
+        {% if f.variacion is none %}—{% else %}{{ "%+.1f"|format(f.variacion) }}%{% endif %}
+      </td>
+      <td class="monto">{{ "%.1f"|format(f.pct_a) }}% → {{ "%.1f"|format(f.pct_b) }}%</td>
+      <td class="monto">{{ f.cant_a }} → {{ f.cant_b }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p><small>Los montos están en pesos corrientes de cada momento, así que si los períodos son de años
+distintos la variación incluye inflación. Para ver cambios reales, mirá el % del total y la cantidad
+de compras.</small></p>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('grafico-comparacion'), {
+    type: 'bar',
+    data: {
+      labels: {{ datos.filas|map(attribute='categoria')|list|tojson }},
+      datasets: [
+        {
+          label: {{ ("A: " ~ etiqueta_a)|tojson }},
+          data: {{ datos.filas|map(attribute='total_a')|list|tojson }},
+          backgroundColor: '#94a3b8',
+          borderRadius: 4
+        },
+        {
+          label: {{ ("B: " ~ etiqueta_b)|tojson }},
+          data: {{ datos.filas|map(attribute='total_b')|list|tojson }},
+          backgroundColor: '#1e293b',
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: { callbacks: { label: c => c.dataset.label + ': $' + c.parsed.x.toLocaleString('es-AR') } }
+      },
+      scales: { x: { ticks: { callback: v => '$' + v.toLocaleString('es-AR') } } }
+    }
+  });
+</script>
+{% else %}
+  <p>Sin datos para esos períodos.</p>
+{% endif %}
+{% endblock %}

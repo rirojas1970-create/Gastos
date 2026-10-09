@@ -226,3 +226,16 @@ footer {
   padding: 20px;
   border-top: 1px solid var(--borde);
 }
+
+/* ---------- Comparar períodos ---------- */
+.comparador .periodos { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.comparador .periodo { border: 1px solid #d1d5db; border-radius: 8px; padding: 1rem; }
+.comparador .periodo.a { border-left: 6px solid #94a3b8; }
+.comparador .periodo.b { border-left: 6px solid #1e293b; }
+.comparador .periodo h4 { margin: 0 0 .75rem; }
+.comparador .fila { display: flex; align-items: center; gap: .5rem; margin-bottom: .6rem; }
+.comparador .rotulo { width: 3.5rem; color: #64748b; font-size: .9rem; }
+.comparador select { min-width: 9rem; }
+.comparador input[type="number"] { width: 6.5rem; }
+.comparador .acciones { margin-top: 1rem; display: flex; align-items: center; gap: 1rem; }
+@media (max-width: 640px) { .comparador .periodos { grid-template-columns: 1fr; } }
