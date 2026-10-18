@@ -38,7 +38,7 @@ MENU = [
         "descripcion": "Compará períodos y visualizá la evolución de tus gastos.",
         "botones": [
             {"texto": "Comparar períodos", "endpoint": "gastos.comparar_periodos"},
-            {"texto": "Evolución mensual", "endpoint": None},
+            
         ],
     },
 ]

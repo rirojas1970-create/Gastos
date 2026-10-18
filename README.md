@@ -1,8 +1,9 @@
 # 💰 Gastos – Control de gastos familiares
 
+![Demo de Gastos](docs/demo.gif)
+
 Aplicación web para registrar, consultar y analizar los gastos de una familia. Desarrollada con Python, Flask, SQLAlchemy y MySQL, con una arquitectura en capas pensada para crecer.
 
-🔗 **Demo en vivo:** _(link al deploy)_
 
 ![Pantalla principal](docs/img/gastos_app.png)
 
@@ -117,7 +118,7 @@ El script solo corre sobre bases `_demo` y solo si están vacías, para no mezcl
 - [x] Estadísticas por categoría y mes, con filtros
 - [x] Detalle por categoría con gráfico
 - [x] Comparar períodos
-- [ ] Evolución mensual
+
 
 
 ## 👤 Autor
